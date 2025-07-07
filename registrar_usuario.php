@@ -1,13 +1,41 @@
 <?php
-require 'config/database.php';
+require_once('config/database.php');
 $db = new Database();
 $con = $db->conectar();
+?>
+<?php
+if(isset($_POST['save'])){
+    $doc= $_POST['document'];
+    $nombres= $_POST['names'];
+    $phone= $_POST['phone'];
+    $email= $_POST['email'];
+    $profesion= $_POST['profesion'];
+    $password= $_POST['contra'];
+    $tip_us= $_POST['tip_us'];
+    $descripcion = $_POST['desc_perfil'];
+
+    $sql= $con->prepare("SELECT * FROM user WHERE doc = '$doc' OR  email = '$email'");
+    $sql->execute();
+    $fila= $sql->fetchAll(PDO::FETCH_ASSOC);
+    if ($fila){
+        echo "<script>alert('El usuario ya existe')</script>";
+    }
+    elseif($doc=="" ||  $nombres =="" || $phone=="" ||  $email== "" || $profesion=="" || $password=="" || $tip_us=="" || $descripcion==""){
+            echo '<script> alert("Campos no diligenciados. Por favor diligencia todos los campos.")</script>';
+        }
+    else{
+        $insert_user= $con->prepare("INSERT INTO user(doc,nombres,celular,profesion,email,password,desc_perf,tip_user_u) VALUES ('$doc','$nombres','$phone','$profesion','$email','$password','$descripcion','$tip_us')");
+        $insert_user->execute();
+        echo "<script>alert('Usuario registrado exitosamente');</script>";
+    }
+}
 
 //destruir la sesion y borrar todo lo que haya en la pagina
 
 //session_destroy();
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,8 +83,8 @@ $con = $db->conectar();
 
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-0 pe-5">
-        <a href="index.html" class="navbar-brand ps-5 me-0">
-            <img src="img/logo3.png">
+        <a href="index.php" class="navbar-brand ps-5 me-0">
+            <img src="img/image.png" width="100" height="130">
         </a>
        
         <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -79,7 +107,7 @@ $con = $db->conectar();
         <div class="container">
    
 
-<form class="dashboard-container FormularioAjax" method="POST" data-form="save" data-lang="es" autocomplete="off" action="save_user.php" enctype="multipart/form-data" >
+<form class="dashboard-container FormularioAjax" method="POST" data-form="save" data-lang="es" autocomplete="off" enctype="multipart/form-data" >
         <input type="hidden" name="modulo_producto" value="registro">
         <fieldset class="mb-4">
             <legend><i class="fas fa-box"></i> &nbsp; Información Personal</legend>
@@ -144,8 +172,15 @@ $con = $db->conectar();
                     
                         <div class="form-outline mb-4">
                                     <label for="contra" class="nav-link"><i class="fas fa-user"></i> &nbsp;<strong>Tipo Usuario </strong></label>
-                                    <select class="form-control">
-                                        <option value=""></option>
+                                    <select class="form-control" name="tip_us">
+                                        <option value="">Elija su Tipo de Usuario</option>
+                                        <?php
+                                        $tip_us= $con->prepare("SELECT * FROM tip_user WHERE id_tip_user > 1");
+                                        $tip_us->execute();
+                                        while($fila= $tip_us->fetch(PDO::FETCH_ASSOC)){
+                                            echo "<option value=" . $fila['id_tip_user'] .">" . $fila['tip_user'] . "</option>";
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                     </div> 

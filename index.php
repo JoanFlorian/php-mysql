@@ -1,3 +1,27 @@
+<?php
+session_start();
+require_once('config/database.php');
+$db = new Database();
+$con = $db->conectar();
+?>
+<?php
+if(isset($_POST['inicio'])){
+    $email= $_POST['email'];
+    $password= $_POST['clave'];
+    $sql = $con -> prepare("SELECT * FROM user WHERE email ='$email' AND password='$password'");
+    $sql->execute();
+    $fila= $sql->fetch();
+    if($fila){
+        $_SESSION['email']=$fila['email'];
+        if($fila['tip_user_u']==2){
+            header("Location:vigilante/index.php");
+        }
+    }
+    else{
+        echo "<script>alert('Usuario no encontrado')</script>";
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +64,7 @@
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-0 pe-5">
         <a href="#" class="navbar-brand ps-5 me-0">
-        <img src="img/no_photo.jpg" width="90" height="100">
+        <img src="img/image.png" width="100" height="130">
         </a>
 
        
@@ -54,14 +78,14 @@
     <div class="container" align="center">
         <fieldset class="mb-4">
             <legend><i class="fas fa-user" ></i> &nbsp; INICIO DE SESION</legend>
-                <form role="form" class="form-horizontal" method="post" name="form1" id="form1" action="includes/inicio.php" autocomplete="off">
+                <form role="form" class="form-horizontal" method="post" name="form1" id="form1"  autocomplete="off">
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="col-12 col-md-9">
                             <div class="form-outline mb-4">
                                 <div class="mb-4">
                                     <div class="form-outline mb-4">
-                                        <label for="cargo" class="nav-link"> &nbsp;<strong>DOCUMENTO </strong></label>
-                                            <input type="text" id="usuario" class="form-control Input" name="usuario" maxlength="11" required>
+                                        <label for="cargo" class="nav-link"> &nbsp;<strong>EMAIL </strong></label>
+                                            <input type="email" id="usuario" class="form-control Input" name="email" maxlength="50" required>
                                     </div>
                                 </div>
                             </div>
@@ -88,7 +112,7 @@
                     </div>
                     <!-- <div class="form-group" align="center">
                         <a href=""><h6>Registrarse</h6></a>
-                    </div> --> -->
+                    </div> --> 
                     <input type="hidden" name="MM_insert" value="form1">
                 </form>
             </fieldset>
