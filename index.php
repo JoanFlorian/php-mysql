@@ -87,7 +87,7 @@
                         <a href="registrar_usuario.php"><h6>Registrarse</h6></a>
                     </div>
                     <!-- <div class="form-group" align="center">
-                        <a href="registrar_usuario.php"><h6>Registrarse</h6></a>
+                        <a href=""><h6>Registrarse</h6></a>
                     </div> --> -->
                     <input type="hidden" name="MM_insert" value="form1">
                 </form>
